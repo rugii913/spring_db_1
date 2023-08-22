@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--로그 참고 블로그-->
+<!--https://tlatmsrud.tistory.com/64-->
+<!--인프런 Q&A 스프링 부트 3.1 이상 - 로그 출력 안되는 문제 해결 // p.44에도 관련 내용 있음-->
+<!--https://www.inflearn.com/questions/883581-->
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} -%kvp- %msg%n</pattern>
+        </encoder>
+    </appender>
+    <root level="DEBUG">
+        <appender-ref ref="STDOUT" />
+    </root>
+</configuration>
