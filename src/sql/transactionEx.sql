@@ -40,3 +40,55 @@ rollback;
 
 // 다시 각 세션에서 확인 - 데이터가 DB에 반영되지 않은 것을 볼 수 있음
 select * from member;
+
+// -------------------------------------------------------
+// 계좌이체 예제
+// 1. 계좌이체 정상
+// 기본 데이터 입력
+set autocommit true;
+delete from member;
+insert into member(member_id, money) values ('memberA', 10000);
+insert into member(member_id, money) values ('memberB', 10000);
+
+// 계좌이체 실행 SQL - 성공
+set autocommit false;
+update member set money = 10000 - 2000 where member_id = 'memberA';
+update member set money = 10000 + 2000 where member_id = 'memberB';
+
+// 세션 1 커밋
+commit;
+select * from member; // 다른 세션에서도 변경 데이터 확인 가능
+
+// 2. 계좌이체 문제 상황 - 커밋
+// 기본 데이터 입력
+set autocommit true;
+delete from member;
+insert into member(member_id, money) values ('memberA', 10000);
+insert into member(member_id, money) values ('memberB', 10000);
+
+// 계좌이체 실행 SQL - 오류
+set autocommit false;
+update member set money = 10000 - 2000 where member_id = 'memberA'; // 성공
+update member set money = 10000 + 2000 where member_iddd = 'memberB'; // 쿼리 예외 발생
+
+// 세션 1 강제 커밋
+commit;
+select * from member;
+// 이렇게 중간에 문제가 발생했을 때는 커밋을 호출하면 안 된다. 롤백을 호출해서 데이터를 트랜잭션 시작 시점으로 원복해야 한다.
+
+// 3. 계좌이체 문제 상황 - 롤백
+// 기본 데이터 입력
+set autocommit true;
+delete from member;
+insert into member(member_id, money) values ('memberA', 10000);
+insert into member(member_id, money) values ('memberB', 10000);
+
+// 계좌이체 실행 SQL - 오류
+set autocommit false;
+update member set money = 10000 - 2000 where member_id = 'memberA'; // 성공
+update member set money = 10000 + 2000 where member_iddd = 'memberB'; // 쿼리 예외 발생
+
+// 세션 1 롤백
+rollback;
+select * from member;
+// 이럴 때는 롤백을 호출해서 트랜잭션을 시작하기 전 단계로 데이터를 복구해야 한다.
