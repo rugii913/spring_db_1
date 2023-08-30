@@ -15,7 +15,7 @@ import java.util.NoSuchElementException;
  * DataSourceUtils.releaseConnection(Connection, DataSource) - 트랜잭션 동기화 매니저 확인 -> 관리하는 커넥션이라면 반납하지 않음
  */
 @Slf4j
-public class MemberRepositoryV3 {
+public class MemberRepositoryV3 implements MemberRepositoryEx {
 
     private final DataSource dataSource;
 
