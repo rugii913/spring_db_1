@@ -6,6 +6,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
 import javax.sql.DataSource;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * JdbcTemplate 사용
@@ -29,7 +31,13 @@ public class MemberRepositoryV5 implements MemberRepository {
     @Override
     public Member findById(String memberId) {
         String sql = "select * from member where member_id = ?";
-        return template.queryForObject(sql, memberRowMapper(), memberId);
+        RowMapper<Member> memberRowMapper = (rs, rowNum) -> {
+            Member member = new Member();
+            member.setMemberId(rs.getString("member_id"));
+            member.setMoney(rs.getInt("money"));
+            return member;
+        };
+        return template.queryForObject(sql, memberRowMapper, memberId);
     }
 
     @Override
@@ -44,6 +52,7 @@ public class MemberRepositoryV5 implements MemberRepository {
         template.update(sql, memberId);
     }
 
+    /*
     private RowMapper<Member> memberRowMapper() {
         return (rs, rowNum) -> {
             Member member = new Member();
@@ -52,4 +61,5 @@ public class MemberRepositoryV5 implements MemberRepository {
             return member;
         };
     }
+     */
 }
